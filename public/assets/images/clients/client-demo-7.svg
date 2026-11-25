@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="260" height="120" viewBox="0 0 260 120" role="img" aria-label="شعار عميل تجريبي 7">
+  <rect width="260" height="120" rx="24" fill="#ffffff"/>
+  <rect x="1" y="1" width="258" height="118" rx="23" fill="none" stroke="#eadfce"/>
+  <g transform="translate(42 30)">
+    <path d="M20 50V22l22-12 22 12v28" fill="none" stroke="#BFA27E" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M31 50V34h22v16" fill="none" stroke="#525659" stroke-width="5" stroke-linecap="round"/>
+  </g>
+  <text x="132" y="54" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#525659">شعار عميل</text>
+  <text x="132" y="80" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#BFA27E">DEMO 07</text>
+</svg>

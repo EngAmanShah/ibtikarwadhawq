@@ -1,0 +1,6 @@
+# منع تشغيل أي سكربت داخل مجلد الرفع
+<FilesMatch "\.(php|phtml|php\d|phar|pl|py|cgi|sh)$">
+    Require all denied
+</FilesMatch>
+Options -ExecCGI -Indexes
+RemoveHandler .php .phtml

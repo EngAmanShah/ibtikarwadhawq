@@ -1,0 +1,225 @@
+/* =====================================================================
+   Studio — طبقة التصميم النهائية
+   أسلوب مكتب معماري: ألوان مسطحة، خطوط رفيعة، تايبوجرافي واضح،
+   بدون توهج أو تدرجات أو حركات استعراضية.
+   ===================================================================== */
+:root {
+  --paper: #ffffff;
+  --cream: #f6f3ee;
+  --side: #fbf9f6;
+  --line: #e8e2d9;
+  --line-2: #d9d1c5;
+  --r-xl: 10px; --r-lg: 10px; --r-md: 8px; --r-sm: 6px;
+  --shadow-1: none;
+  --shadow-2: 0 12px 32px rgba(31, 27, 23, .10);
+}
+
+body { background: var(--cream); background-image: none; }
+.rise > * { animation: none !important; }
+
+/* ---------- الهيكل ---------- */
+.shell { padding: 0; gap: 0; }
+.rail {
+  top: 0; height: 100vh; border-radius: 0; box-shadow: none;
+  background: var(--side); color: var(--text);
+  border-left: 1px solid var(--line);
+}
+.rail::after { display: none; }
+.rail-brand { padding: 24px 24px 20px; border-bottom: 1px solid var(--line); }
+.rail-brand img { width: 40px; height: 40px; background: none; border-radius: 0; padding: 0; }
+.rail-brand strong { color: var(--ink); font-size: 15px; }
+.rail-brand small { color: var(--muted); opacity: 1; }
+.rail-nav { padding: 6px 12px 16px; scrollbar-color: var(--line-2) transparent; }
+.rail-group { margin-top: 18px; }
+.rail-group-title { color: var(--muted); font-size: 11.5px; font-weight: 700; padding: 0 12px 6px; }
+.rail-link { border-radius: 6px; padding: 8px 12px; gap: 12px; color: #5d544b; font-weight: 600; }
+.rail-link .ico { width: 18px; height: auto; background: none; color: #a39788; font-size: 14px; border-radius: 0; }
+.rail-link:hover { background: #f1ece5; color: var(--ink); }
+.rail-link:hover .ico { background: none; color: var(--gold-d); }
+.rail-link.active { background: #efe9e0; color: var(--ink); font-weight: 700; }
+.rail-link.active .ico { background: none; color: var(--gold-d); box-shadow: none; }
+.rail-link.active::before { right: -12px; top: 6px; bottom: 6px; width: 3px; border-radius: 0; background: var(--gold-d); }
+.rail-link .count { background: var(--ink); color: #fff; border-radius: 4px; height: 20px; min-width: 20px; font-size: 11px; }
+.rail-foot { border-top: 1px solid var(--line); }
+.rail-user { background: none; padding: 4px; }
+.rail-user strong { color: var(--ink); }
+.rail-user small { color: var(--muted); }
+.avatar { border-radius: 6px; background: var(--ink); color: var(--gold-l); }
+.icon-btn-dark { background: none; border: 1px solid var(--line-2); color: #7b7066; border-radius: 6px; }
+.icon-btn-dark:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
+
+.main { padding: 0 40px 120px; gap: 26px; }
+.topbar {
+  top: 0; margin: 0 -40px; padding: 12px 40px; border-radius: 0;
+  background: rgba(246, 243, 238, .94); backdrop-filter: none; -webkit-backdrop-filter: none;
+  border: 0; border-bottom: 1px solid var(--line); box-shadow: none;
+}
+.search-trigger { border-radius: 6px; background: var(--paper); border-color: var(--line-2); min-width: 340px; }
+.search-trigger kbd { border-radius: 4px; }
+.top-icon { border-radius: 6px; background: var(--paper); border-color: var(--line-2); }
+.top-icon:hover { transform: none; }
+.top-icon .dot { border-radius: 4px; }
+
+/* ---------- الأزرار ---------- */
+.btn { border-radius: 6px; padding: 10px 18px; font-weight: 700; transition: background .15s, color .15s, border-color .15s; }
+.btn:active { transform: none; }
+.btn-gold { background: var(--ink); color: #fff; box-shadow: none; }
+.btn-gold:hover { background: var(--gold-d); box-shadow: none; transform: none; }
+.btn-dark { background: var(--ink); }
+.btn-ghost { background: var(--paper); border-color: var(--line-2); }
+.btn-ghost:hover { border-color: var(--ink); color: var(--ink); }
+.btn-soft { background: transparent; color: var(--ink); border-color: var(--line-2); }
+.btn-soft:hover { background: var(--paper); border-color: var(--ink); }
+.btn-danger { background: transparent; border-color: var(--line-2); }
+.btn-danger:hover { background: var(--red); border-color: var(--red); }
+.btn-icon { border-radius: 6px; }
+
+/* ---------- رأس الصفحة ---------- */
+.page-head { padding: 34px 0 22px; border-bottom: 1px solid var(--line); align-items: flex-end; }
+.page-head-icon { display: none; }
+.page-head h1 { font-size: 28px; letter-spacing: -.2px; }
+.page-head h1::after { content: ""; display: block; width: 36px; height: 3px; background: var(--gold); margin-top: 10px; }
+.page-head p { margin-top: 8px; }
+
+/* ---------- البطاقات ---------- */
+.card { border-radius: 10px; box-shadow: none; border-color: var(--line); }
+.card-head { border-bottom: 1px solid var(--line); padding: 16px 22px; }
+.card-head .chip-ico { width: auto; height: auto; background: none; color: var(--gold-d); font-size: 15px; border-radius: 0; }
+.card-head h2, .card-head h3 { font-size: 15px; }
+
+/* ---------- النماذج ---------- */
+.input, .textarea, .select, .icon-picker-btn, .color-field { border-radius: 6px; border-width: 1px; }
+.input:focus, .textarea:focus, .select:focus { border-color: var(--ink); box-shadow: 0 0 0 3px rgba(31,27,23,.07); }
+.icon-picker-btn .ip-preview { border-radius: 4px; background: var(--cream); }
+.icon-pop { border-radius: 8px; }
+.icon-grid button { border-radius: 4px; }
+.icon-grid button:hover, .icon-grid button.sel { background: var(--ink); border-color: var(--ink); }
+.dropzone { border-radius: 8px; border-width: 1px; background: var(--cream); }
+.dropzone:hover, .dropzone.drag { border-color: var(--ink); transform: none; }
+.dz-overlay span, .dz-new { border-radius: 4px; }
+.section-hint { background: var(--cream); border: 0; border-right: 3px solid var(--gold); border-radius: 0; }
+.color-field input[type=color], .color-field input[type=color]::-webkit-color-swatch { border-radius: 4px; }
+.counter-bar { border-radius: 0; height: 3px; }
+.serp { border-radius: 8px; }
+.switch input:checked + .track { background: var(--ink); }
+.switch .on-text { color: var(--ink); }
+
+/* ---------- محرر الصفحات ---------- */
+.editor-index { top: 90px; padding: 10px; }
+.editor-index a { border-radius: 6px; }
+.editor-index a i { background: none; width: 18px; height: auto; }
+.editor-index a.current { background: var(--ink); }
+.editor-index a.current i { background: none; color: var(--gold-l); }
+.editor-index .idx-related i { background: none; }
+
+/* ---------- شريط الحفظ ---------- */
+.save-dock { border-radius: 8px; box-shadow: var(--shadow-2); }
+.save-dock .pulse { animation: none; box-shadow: none; }
+.save-dock .btn-gold { background: var(--gold); color: var(--ink); }
+.save-dock .btn-gold:hover { background: #fff; }
+
+/* ---------- القوائم ---------- */
+.item-card { border-radius: 10px; box-shadow: none; }
+.item-card:hover { transform: none; box-shadow: none; border-color: var(--line-2); }
+.item-card:hover .item-media img { transform: none; }
+.item-media { background: var(--cream); border-bottom: 1px solid var(--line); }
+.item-handle, .item-order { border-radius: 4px; box-shadow: none; }
+.item-foot { border-top: 1px solid var(--line); }
+.row-item { border-radius: 8px; box-shadow: none; }
+.row-item .row-ico { background: none; border: 1px solid var(--line); border-radius: 6px; width: 40px; height: 40px; }
+.sortable-chosen { transform: none; }
+.tag { border-radius: 4px; }
+.empty-art span:nth-child(1) { display: none; }
+.empty-art span:nth-child(2) { inset: 25px; transform: none; box-shadow: none; background: var(--ink); border-radius: 8px; font-size: 24px; }
+
+/* ---------- الرئيسية ---------- */
+.hello { background: var(--paper); color: var(--text); border: 1px solid var(--line); border-radius: 10px; box-shadow: none; padding: 30px 32px; }
+.hello::before, .hello::after { display: none; }
+.hello .date { color: var(--muted); }
+.hello h1 { color: var(--ink); font-size: 26px; }
+.hello h1 span { color: var(--gold-d); }
+.hello p { color: var(--muted); }
+.hello .btn-ghost { background: var(--paper); color: var(--ink); border-color: var(--line-2); }
+.health-ring small { color: var(--muted); }
+.health-ring strong { color: var(--ink); }
+.stat-top i { background: none; width: auto; height: auto; color: var(--gold-d); }
+.stat:hover { border-color: var(--line-2); }
+.quick { border-radius: 8px; }
+.quick:hover { transform: none; box-shadow: none; border-color: var(--ink); }
+.quick i { background: none; border: 1px solid var(--line); border-radius: 6px; }
+.quick:hover i { background: var(--ink); color: #fff; transform: none; }
+.check > i { border-radius: 4px; }
+.feed-item > i { background: none; border: 1px solid var(--line); border-radius: 6px; }
+.check, .feed-item, .lead-mini { border-bottom-style: solid; }
+
+/* ---------- الطلبات ---------- */
+.tabs { border-radius: 8px; }
+.tabs a { border-radius: 6px; }
+.tabs a b { border-radius: 4px; }
+.status-pick span { border-radius: 6px; border-width: 1px; }
+.status-pick input:checked + span { border-color: var(--ink); background: var(--ink); color: #fff; }
+.table td { border-bottom-style: solid; }
+.info-list div { border-bottom-style: solid; }
+
+/* ---------- تنبيهات ونوافذ ---------- */
+.toast { border-radius: 8px; animation: fade .2s; }
+.toast i.t-ico { border-radius: 4px; }
+.alert { border-radius: 8px; }
+.modal { border-radius: 12px; animation: fade .15s; }
+.modal .m-ico { transform: none; border-radius: 8px; }
+.palette { border-radius: 12px; animation: fade .15s; }
+.palette-list a { border-radius: 6px; }
+.palette-list a i { border-radius: 4px; background: none; border: 1px solid var(--line); }
+.palette-list a.sel i { background: none; border-color: rgba(255,255,255,.25); color: var(--gold-l); }
+.pager a, .pager span { border-radius: 6px; }
+
+/* ---------- معالج التثبيت ---------- */
+.step { border-radius: 8px; }
+.step b { border-radius: 4px; }
+.feature-tiles div { border-radius: 8px; background: var(--paper); border: 1px solid var(--line); }
+.feature-tiles i { background: none; width: auto; height: auto; border-radius: 0; }
+.req { border-radius: 8px; }
+.req > i { border-radius: 4px; }
+.success-burst { transform: none; box-shadow: none; border-radius: 10px; width: 80px; height: 80px; font-size: 32px; background: var(--ink); animation: none; }
+.wizard-top img { border-radius: 0; box-shadow: none; background: none; }
+
+/* ---------- صفحة الدخول ---------- */
+body.login { background: var(--paper); }
+.login-split { min-height: 100vh; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); }
+.login-side { background: var(--ink); color: #efe6da; padding: 48px 56px; display: flex; flex-direction: column; justify-content: space-between; }
+.login-side .ls-top { display: flex; align-items: center; gap: 12px; font-size: 13px; color: #b9ab98; }
+.login-side .ls-top img { width: 34px; height: 34px; object-fit: contain; filter: brightness(0) invert(1) opacity(.85); }
+.login-side h2 { font-size: 56px; font-weight: 800; line-height: 1.25; color: #fff; letter-spacing: -.5px; }
+.login-side h2 small { display: block; font-size: 18px; font-weight: 600; color: var(--gold); letter-spacing: 0; margin-top: 14px; }
+.login-side .ls-rule { width: 56px; height: 3px; background: var(--gold); margin: 28px 0 18px; }
+.login-side p { color: #b9ab98; max-width: 380px; font-size: 14px; }
+.login-side .ls-foot { display: flex; justify-content: space-between; font-size: 12px; color: #8d8172; border-top: 1px solid rgba(255,255,255,.1); padding-top: 18px; }
+.login-main { display: grid; place-items: center; padding: 40px 24px; }
+.login-box { width: 100%; max-width: 380px; }
+.login-box h1 { font-size: 26px; font-weight: 800; color: var(--ink); }
+.login-box > p { color: var(--muted); margin: 4px 0 30px; }
+.login-box form { display: flex; flex-direction: column; gap: 18px; }
+.login-box .input { padding-top: 12px; padding-bottom: 12px; }
+.login-box .alert { margin-bottom: 18px; }
+.login-box .btn-lg { width: 100%; margin-top: 4px; }
+.login-box .login-back { display: inline-flex; gap: 8px; align-items: center; margin-top: 26px; font-size: 13px; color: var(--muted); font-weight: 600; }
+.login-box .login-back:hover { color: var(--ink); }
+
+@media (max-width: 1100px) {
+  .rail { top: 0; right: 0; bottom: 0; height: 100vh; }
+  .main { padding: 0 20px 120px; }
+  .topbar { margin: 0 -20px; padding: 10px 20px; top: 0; }
+}
+@media (max-width: 860px) {
+  .login-split { grid-template-columns: 1fr; }
+  .login-side { padding: 28px; }
+  .login-side h2 { font-size: 34px; }
+  .login-side p, .login-side .ls-foot { display: none; }
+  .login-side .ls-rule { margin: 16px 0 0; }
+}
+@media (max-width: 640px) {
+  .main { padding: 0 12px 120px; }
+  .topbar { margin: 0 -12px; padding: 10px 12px; }
+  .page-head { padding-top: 22px; }
+  .page-head h1 { font-size: 22px; }
+}
