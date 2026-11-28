@@ -10,6 +10,9 @@
 
 return [
 
+    // النطاق الرسمي للموقع — يُستخدم لإصلاح أي رابط معاينة مخزّن في الإعدادات
+    'canonical_url' => env('CANONICAL_URL', 'https://ibtikarwadhawq.com'),
+
     'pages' => [
 
         /* ============================== الصفحة الرئيسية ============================== */
@@ -329,7 +332,7 @@ return [
                 [
                     'title' => 'إعدادات عامة', 'icon' => 'fa-globe',
                     'fields' => [
-                        ['key' => 'site_url', 'label' => 'رابط الموقع الأساسي', 'type' => 'url', 'default' => 'https://ebtkar-wadhawq.com', 'help' => 'يستخدم في الروابط الأساسية لمحركات البحث (Canonical).'],
+                        ['key' => 'site_url', 'label' => 'رابط الموقع الأساسي', 'type' => 'url', 'default' => 'https://ibtikarwadhawq.com', 'help' => 'يُستخدم في Canonical و Sitemap. اتركه على النطاق الرسمي، ولا تضع رابط معاينة الاستضافة.'],
                         ['key' => 'og_image', 'label' => 'صورة المشاركة الافتراضية', 'type' => 'image', 'default' => 'assets/images/about-facade.webp', 'help' => 'تظهر عند مشاركة رابط الموقع في واتساب وتويتر.'],
                         ['key' => 'seo_city', 'label' => 'المدينة', 'type' => 'text', 'default' => 'الجبيل', 'third' => true],
                         ['key' => 'seo_region', 'label' => 'المنطقة', 'type' => 'text', 'default' => 'المنطقة الشرقية', 'third' => true],

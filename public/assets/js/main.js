@@ -89,6 +89,15 @@ document.addEventListener("DOMContentLoaded", () => {
         { breakpoint: 520, settings: { slidesToShow: 2 } }
       ]
     });
+
+    // الشرائح المخفية عن قارئات الشاشة يجب ألا تكون قابلة للتركيز بلوحة المفاتيح
+    const syncSlideFocus = () => {
+      $finishingTrack.find(".slick-slide").each(function () {
+        this.setAttribute("tabindex", this.getAttribute("aria-hidden") === "true" ? "-1" : "0");
+      });
+    };
+    syncSlideFocus();
+    $finishingTrack.on("afterChange", syncSlideFocus);
   }
 
 });

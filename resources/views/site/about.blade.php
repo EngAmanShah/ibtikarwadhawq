@@ -18,7 +18,7 @@
       @if(setting('about_intro_text2'))<p>{{ setting('about_intro_text2') }}</p>@endif
     </div>
     <div class="about-profile-image about-img equal-frame-media" data-reveal="">
-      <img alt="{{ setting('site_name') }}" loading="lazy" src="{{ media(setting('about_intro_image')) }}" />
+      <img alt="{{ setting('site_name') }}" loading="lazy" decoding="async" src="{{ media(setting('about_intro_image')) }}"@if($d = media_dimensions(setting('about_intro_image'))) width="{{ $d['width'] }}" height="{{ $d['height'] }}"@endif{!! img_srcset(setting('about_intro_image')) !!} sizes="(max-width: 900px) 92vw, 747px" />
     </div>
   </div>
 </section>
@@ -27,7 +27,7 @@
 <section class="section soft about-team-section">
   <div class="container about-profile equal-frame-grid about-profile--reverse">
     <div class="about-profile-image about-img equal-frame-media team-image-frame" data-reveal="">
-      <img alt="{{ setting('about_team_title') }}" loading="lazy" src="{{ media(setting('about_team_image')) }}" />
+      <img alt="{{ setting('about_team_title') }}" loading="lazy" decoding="async" src="{{ media(setting('about_team_image')) }}"@if($d = media_dimensions(setting('about_team_image'))) width="{{ $d['width'] }}" height="{{ $d['height'] }}"@endif{!! img_srcset(setting('about_team_image')) !!} sizes="(max-width: 900px) 92vw, 747px" />
     </div>
     <div class="about-profile-copy about-frame equal-frame-card" data-reveal="">
       <div class="section-label"><i class="fa-solid fa-helmet-safety" style="margin-left:6px;"></i> {{ setting('about_team_label') }}</div>

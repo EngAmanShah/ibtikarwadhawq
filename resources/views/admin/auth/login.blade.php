@@ -4,7 +4,7 @@
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex">
   <title>تسجيل الدخول — {{ setting('brand_name') }}</title>
   <link rel="icon" href="{{ media(setting('favicon')) }}">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="{{ asset('assets/vendor/fontawesome/css/all.min.css') }}">
   <link rel="stylesheet" href="{{ asset('admin-assets/admin.css') }}?v={{ @filemtime(public_path('admin-assets/admin.css')) }}">
   <link rel="stylesheet" href="{{ asset('admin-assets/studio.css') }}?v={{ @filemtime(public_path('admin-assets/studio.css')) }}">
 </head>
@@ -17,7 +17,7 @@
       <div class="ls-rule"></div>
       <p>تعديل النصوص والصور والخدمات وبيانات التواصل، ومتابعة طلبات العملاء من مكان واحد.</p>
     </div>
-    <div class="ls-foot"><span>{{ preg_replace('#^https?://#', '', rtrim(setting('site_url') ?: url('/'), '/')) }}</span><span>{{ date('Y') }}</span></div>
+    <div class="ls-foot"><span>{{ preg_replace('#^https?://#', '', site_base()) }}</span><span>{{ date('Y') }}</span></div>
   </aside>
 
   <main class="login-main">

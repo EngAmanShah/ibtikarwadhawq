@@ -1,27 +1,27 @@
 @font-face {
   font-family: "Noto Kufi Arabic";
-  src: url("../fonts/NotoKufiArabic-Regular.ttf") format("truetype");
+  src: url("../fonts/NotoKufiArabic-Regular.woff2") format("woff2"), url("../fonts/NotoKufiArabic-Regular.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "Noto Kufi Arabic";
-  src: url("../fonts/NotoKufiArabic-SemiBold.ttf") format("truetype");
+  src: url("../fonts/NotoKufiArabic-SemiBold.woff2") format("woff2"), url("../fonts/NotoKufiArabic-SemiBold.ttf") format("truetype");
   font-weight: 600;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "Noto Kufi Arabic";
-  src: url("../fonts/NotoKufiArabic-Bold.ttf") format("truetype");
+  src: url("../fonts/NotoKufiArabic-Bold.woff2") format("woff2"), url("../fonts/NotoKufiArabic-Bold.ttf") format("truetype");
   font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "Noto Kufi Arabic";
-  src: url("../fonts/NotoKufiArabic-ExtraBold.ttf") format("truetype");
+  src: url("../fonts/NotoKufiArabic-ExtraBold.woff2") format("woff2"), url("../fonts/NotoKufiArabic-ExtraBold.ttf") format("truetype");
   font-weight: 800;
   font-style: normal;
   font-display: swap;
@@ -4887,4 +4887,25 @@ button,
     height: 42px !important;
     font-size: 0.8rem !important;
   }
+}
+
+/* نص للقارئات فقط: يجعل نص الرابط فريدًا دون التأثير على التصميم */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* تباين كافٍ للنصوص الصغيرة داخل الفوتر الداكن */
+.footer-bottom {
+  color: rgba(255, 255, 255, 0.8);
+}
+.footer-bottom a {
+  color: #e6d3b3;
 }

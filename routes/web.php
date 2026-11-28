@@ -36,6 +36,7 @@ Route::middleware('track')->controller(SiteController::class)->name('site.')->gr
 });
 Route::post('/contact', [SiteController::class, 'storeLead'])->middleware('throttle:6,1')->name('site.lead');
 Route::get('/sitemap.xml', [SiteController::class, 'sitemap'])->name('site.sitemap');
+Route::get('/llms.txt', [SiteController::class, 'llms'])->name('site.llms');
 Route::get('/index.html', fn () => redirect('/', 301));
 
 /*

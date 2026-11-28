@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\EnsureInstalled;
+use App\Http\Middleware\SecurityHeaders;
 use App\Http\Middleware\TrackVisit;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -13,7 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->web(append: [EnsureInstalled::class]);
+        $middleware->web(append: [EnsureInstalled::class, SecurityHeaders::class]);
         $middleware->alias(['track' => TrackVisit::class]);
         $middleware->redirectGuestsTo(fn () => route('admin.login'));
         $middleware->redirectUsersTo(fn () => route('admin.dashboard'));

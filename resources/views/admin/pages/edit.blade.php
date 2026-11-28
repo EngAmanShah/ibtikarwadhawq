@@ -66,7 +66,7 @@
                 <div class="field">
                   <span class="label"><i class="fa-brands fa-google"></i> هكذا ستظهر في نتائج جوجل</span>
                   <div class="serp" data-serp data-title-from="#f_{{ $tf['key'] }}" data-desc-from="#f_{{ $df['key'] }}">
-                    <div class="serp-url">{{ preg_replace('#^https?://#', '', rtrim(setting('site_url'), '/')) }}</div>
+                    <div class="serp-url">{{ preg_replace('#^https?://#', '', site_base()) }}</div>
                     <div class="serp-title"></div>
                     <div class="serp-desc"></div>
                   </div>

@@ -30,10 +30,14 @@ class Uploader
 
         if (in_array($ext, ['jpg', 'jpeg', 'png']) && static::canConvert()) {
             $out = static::toWebp($file->getRealPath(), $ext, "$dir/$base.webp", $maxWidth);
-            if ($out) return "uploads/$folder/$base.webp";
+            if ($out) {
+                \App\Support\ImageVariants::generate("uploads/$folder/$base.webp");
+                return "uploads/$folder/$base.webp";
+            }
         }
 
         $file->move($dir, "$base.$ext");
+        \App\Support\ImageVariants::generate("uploads/$folder/$base.$ext");
         return "uploads/$folder/$base.$ext";
     }
 

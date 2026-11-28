@@ -2,7 +2,7 @@
 
 @section('content')
 <section class="sp-hero service-category-hero">
-  <img alt="{{ $service->title }}" src="{{ media($service->hero_image ?: $service->card_image) }}" />
+  <img alt="{{ $service->title }}" decoding="async" fetchpriority="high" src="{{ media($service->hero_image ?: $service->card_image) }}"@if($d = media_dimensions($service->hero_image ?: $service->card_image)) width="{{ $d['width'] }}" height="{{ $d['height'] }}"@endif{!! img_srcset($service->hero_image ?: $service->card_image) !!} sizes="100vw" />
   <div class="sp-hero-overlay"></div>
   <div class="container">
     <div class="sp-hero-body">
@@ -36,7 +36,7 @@
       @endif
     </div>
     <div class="service-detail-media equal-frame-media">
-      <img alt="{{ $item->title }}" loading="lazy" src="{{ media($item->image) }}" />
+      <img alt="{{ $item->title }}" loading="lazy" decoding="async" src="{{ media($item->image) }}"@if($d = media_dimensions($item->image)) width="{{ $d['width'] }}" height="{{ $d['height'] }}"@endif{!! img_srcset($item->image) !!} sizes="(max-width: 900px) 92vw, 718px" />
     </div>
   </section>
   @endforeach

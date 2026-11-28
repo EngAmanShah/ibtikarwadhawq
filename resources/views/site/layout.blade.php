@@ -1,10 +1,12 @@
 @php
-    $siteUrl = rtrim(setting('site_url') ?: url('/'), '/');
+    $siteUrl = site_base();
     $canonical = $siteUrl . ($seo['path'] === '/' ? '/' : $seo['path']);
-    $ogImage = media($seo['image'] ?? setting('og_image'));
-    if ($ogImage && ! str_starts_with($ogImage, 'http')) $ogImage = url($ogImage);
+    $ogImage = absolute_media($seo['image'] ?? setting('og_image'));
+    $ogDims = media_dimensions($seo['image'] ?? setting('og_image'));
     $gtm = trim((string) setting('gtm_id'));
     $siteName = setting('site_name');
+    $logoDims = media_dimensions(setting('logo_icon'));
+    $footerLogoDims = media_dimensions(setting('footer_logo'));
     $socials = collect(['instagram' => ['fa-instagram', 'إنستجرام'], 'snapchat' => ['fa-snapchat', 'سناب شات'], 'tiktok' => ['fa-tiktok', 'تيك توك'], 'x' => ['fa-x-twitter', 'منصة X'], 'facebook' => ['fa-facebook-f', 'فيسبوك'], 'linkedin' => ['fa-linkedin-in', 'لينكد إن'], 'youtube' => ['fa-youtube', 'يوتيوب']])
         ->map(fn ($meta, $k) => ['url' => setting("social_$k"), 'icon' => $meta[0], 'label' => $meta[1]])
         ->filter(fn ($s) => ! empty($s['url']));
@@ -12,52 +14,28 @@
     $primaryDark = setting('primary_dark');
     $current = request()->path();
     $isActive = fn ($p) => $p === '' ? $current === '/' : str_starts_with($current, $p);
-
-    $graph = [
-        [
-            '@type' => ['LocalBusiness', 'HomeAndConstructionBusiness'],
-            '@id' => $siteUrl . '/#business',
-            'name' => $siteName,
-            'url' => $siteUrl . '/',
-            'logo' => url(media(setting('logo_icon'))),
-            'image' => url(media(setting('logo_icon'))),
-            'email' => setting('email'),
-            'telephone' => setting('phone_main'),
-            'address' => ['@type' => 'PostalAddress', 'addressLocality' => setting('seo_city'), 'addressRegion' => setting('seo_region'), 'postalCode' => setting('seo_postal'), 'addressCountry' => 'SA'],
-            'areaServed' => collect(\App\Models\Setting::list('seo_areas'))->map(fn ($c) => ['@type' => 'City', 'name' => $c])->values()->all(),
-            'sameAs' => $socials->pluck('url')->values()->all(),
-            'contactPoint' => $branches->map(fn ($b) => ['@type' => 'ContactPoint', 'telephone' => $b->phone_link, 'contactType' => 'customer service', 'areaServed' => 'SA', 'availableLanguage' => 'Arabic'])->values()->all(),
-        ],
-        ['@type' => 'WebSite', '@id' => $siteUrl . '/#website', 'url' => $siteUrl . '/', 'name' => $siteName, 'inLanguage' => 'ar-SA', 'publisher' => ['@id' => $siteUrl . '/#business']],
-        [
-            '@type' => 'BreadcrumbList',
-            '@id' => $canonical . '#breadcrumb',
-            'itemListElement' => collect([['الرئيسية', '/']])->merge($seo['crumbs'] ?? [])->values()->map(fn ($c, $i) => ['@type' => 'ListItem', 'position' => $i + 1, 'name' => $c[0], 'item' => $siteUrl . ($c[1] === '/' ? '/' : $c[1])])->all(),
-        ],
-        ['@type' => 'WebPage', '@id' => $canonical . '#webpage', 'url' => $canonical, 'name' => $seo['title'], 'description' => $seo['description'], 'inLanguage' => 'ar-SA', 'isPartOf' => ['@id' => $siteUrl . '/#website']],
-    ];
-    if (! empty($seo['service'])) {
-        $graph[] = ['@type' => 'Service', '@id' => $canonical . '#service', 'name' => $seo['service']->title, 'description' => $seo['description'], 'url' => $canonical, 'image' => $ogImage, 'provider' => ['@id' => $siteUrl . '/#business'], 'serviceType' => $seo['service']->title];
-    }
+    $schema = \App\Support\Schema::graph($seo, $branches ?? collect(), $menuServices ?? collect());
 @endphp
 <!doctype html>
 <html dir="rtl" lang="ar">
 <head>
-@if($gtm)
-<!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer',@json($gtm));</script>
-<!-- End Google Tag Manager -->
-@endif
 <meta charset="utf-8" />
 <meta content="width=device-width, initial-scale=1.0" name="viewport" />
 <title>{{ $seo['title'] }}</title>
 <meta content="{{ $seo['description'] }}" name="description" />
 <link href="{{ $canonical }}" rel="canonical" />
+<link href="{{ $canonical }}" hreflang="ar-SA" rel="alternate" />
+<link href="{{ $canonical }}" hreflang="x-default" rel="alternate" />
 <meta content="{{ $seo['title'] }}" property="og:title" />
 <meta content="{{ $seo['description'] }}" property="og:description" />
-<meta content="website" property="og:type" />
+<meta content="{{ $seo['og_type'] ?? 'website' }}" property="og:type" />
 <meta content="ar_SA" property="og:locale" />
 <meta content="{{ $ogImage }}" property="og:image" />
+@if($ogDims)
+<meta content="{{ $ogDims['width'] }}" property="og:image:width" />
+<meta content="{{ $ogDims['height'] }}" property="og:image:height" />
+@endif
+<meta content="{{ $seo['title'] }}" property="og:image:alt" />
 <meta content="{{ $siteName }}" property="og:site_name" />
 <meta content="{{ $canonical }}" property="og:url" />
 <meta content="summary_large_image" name="twitter:card" />
@@ -67,13 +45,25 @@
 <meta content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" name="robots" />
 @if(setting('google_verification'))<meta content="{{ setting('google_verification') }}" name="google-site-verification" />@endif
 <link href="{{ media(setting('favicon')) }}" rel="icon" />
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" />
+<link href="{{ media(setting('favicon')) }}" rel="apple-touch-icon" />
+<meta content="{{ $primary ?: '#bfa27e' }}" name="theme-color" />
+@if($gtm)
+<link href="https://www.googletagmanager.com" rel="preconnect" />
+@endif
+<link as="font" crossorigin href="{{ asset('assets/fonts/NotoKufiArabic-Regular.woff2') }}" rel="preload" type="font/woff2" />
+<link as="font" crossorigin href="{{ asset('assets/fonts/NotoKufiArabic-Bold.woff2') }}" rel="preload" type="font/woff2" />
+<link href="{{ asset('assets/vendor/fontawesome/css/all.min.css') }}" rel="stylesheet" />
 @stack('head')
 <link href="{{ asset('assets/css/style.css') }}?v={{ @filemtime(public_path('assets/css/style.css')) }}" rel="stylesheet" />
 @if($primary && ($primary !== '#bfa27e' || $primaryDark !== '#a88c66'))
 <style>:root{--primary:{{ $primary }};--primary-dark:{{ $primaryDark ?: $primary }};}</style>
 @endif
-<script type="application/ld+json">{!! json_encode(['@context' => 'https://schema.org', '@graph' => $graph], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG) !!}</script>
+<script type="application/ld+json">{!! json_encode($schema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP) !!}</script>
+@if($gtm)
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer',@json($gtm));</script>
+<!-- End Google Tag Manager -->
+@endif
 {!! setting('custom_head_code') !!}
 </head>
 <body>
@@ -85,7 +75,7 @@
   <div class="header-outer">
     <div class="header-shell">
       <a class="brand" href="{{ url('/') }}" aria-label="{{ setting('brand_name') }}">
-        <img class="brand-icon" src="{{ media(setting('logo_icon')) }}" alt="شعار {{ setting('brand_name') }}">
+        <img class="brand-icon" src="{{ media(setting('logo_icon')) }}" alt="شعار {{ setting('brand_name') }}"@if($logoDims) width="{{ $logoDims['width'] }}" height="{{ $logoDims['height'] }}"@endif{!! img_srcset(setting('logo_icon')) !!} sizes="91px" decoding="async">
         <span class="brand-text"><strong>{{ setting('brand_name') }}</strong><small>{{ setting('brand_suffix') }}</small></span>
       </a>
       <nav class="desktop-nav" aria-label="القائمة الرئيسية">
@@ -114,7 +104,7 @@
 <aside class="mobile-menu" id="mobileMenu" aria-label="قائمة الجوال">
   <div class="mobile-head">
     <div class="mobile-brand">
-      <img class="brand-icon" src="{{ media(setting('logo_icon')) }}" alt="شعار {{ setting('brand_name') }}">
+      <img class="brand-icon" src="{{ media(setting('logo_icon')) }}" alt="شعار {{ setting('brand_name') }}"@if($logoDims) width="{{ $logoDims['width'] }}" height="{{ $logoDims['height'] }}"@endif{!! img_srcset(setting('logo_icon')) !!} sizes="52px">
       <span class="brand-text"><strong>{{ setting('brand_name') }}</strong><small>{{ setting('brand_suffix') }}</small></span>
     </div>
     <button id="menuClose" aria-label="إغلاق القائمة"><i class="fa-solid fa-xmark"></i></button>
@@ -140,7 +130,7 @@
 <footer class="site-footer">
   <div class="footer-shell">
     <div class="footer-brand">
-      <div class="footer-brand-logo"><img src="{{ media(setting('footer_logo')) }}" alt="{{ setting('brand_name') }}"></div>
+      <div class="footer-brand-logo"><img src="{{ media(setting('footer_logo')) }}" alt="{{ setting('brand_name') }}"@if($footerLogoDims) width="{{ $footerLogoDims['width'] }}" height="{{ $footerLogoDims['height'] }}"@endif{!! img_srcset(setting('footer_logo')) !!} sizes="163px" loading="lazy" decoding="async"></div>
       <p>{{ setting('footer_text') }}</p>
       @if($socials->count())
       <div class="footer-social" aria-label="حسابات التواصل الاجتماعي">
@@ -194,8 +184,8 @@
 </div>
 @endif
 
-<script src="{{ asset('assets/js/site.js') }}?v={{ @filemtime(public_path('assets/js/site.js')) }}"></script>
+<script defer src="{{ asset('assets/js/site.js') }}?v={{ @filemtime(public_path('assets/js/site.js')) }}"></script>
 @stack('scripts')
-<script src="{{ asset('assets/js/main.js') }}?v={{ @filemtime(public_path('assets/js/main.js')) }}"></script>
+<script defer src="{{ asset('assets/js/main.js') }}?v={{ @filemtime(public_path('assets/js/main.js')) }}"></script>
 </body>
 </html>

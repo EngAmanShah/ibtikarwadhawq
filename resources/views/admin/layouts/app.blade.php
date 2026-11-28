@@ -60,7 +60,7 @@
   <meta name="robots" content="noindex, nofollow">
   <title>@yield('title', 'لوحة التحكم') — {{ setting('brand_name') }}</title>
   <link rel="icon" href="{{ media(setting('favicon')) }}">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="{{ asset('assets/vendor/fontawesome/css/all.min.css') }}">
   <link rel="stylesheet" href="{{ asset('admin-assets/admin.css') }}?v={{ @filemtime(public_path('admin-assets/admin.css')) }}">
   <link rel="stylesheet" href="{{ asset('admin-assets/studio.css') }}?v={{ @filemtime(public_path('admin-assets/studio.css')) }}">
   @stack('head')

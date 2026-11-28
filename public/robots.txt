@@ -3,4 +3,4 @@ Allow: /
 Disallow: /admin
 Disallow: /install
 
-Sitemap: https://ebtkar-wadhawq.com/sitemap.xml
+Sitemap: https://ibtikarwadhawq.com/sitemap.xml

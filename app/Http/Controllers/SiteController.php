@@ -34,9 +34,11 @@ class SiteController extends Controller
 
     public function services()
     {
+        $services = Service::active()->ordered()->get();
+
         return view('site.services', [
-            'seo' => $this->seo('services', 'الخدمات', '/services'),
-            'services' => Service::active()->ordered()->get(),
+            'seo' => $this->seo('services', 'الخدمات', '/services', ['services' => $services]),
+            'services' => $services,
         ]);
     }
 
@@ -58,6 +60,8 @@ class SiteController extends Controller
                 'path' => '/services/' . $service->slug,
                 'crumbs' => [['الخدمات', '/services'], [$service->title, '/services/' . $service->slug]],
                 'service' => $service,
+                'type' => 'ItemPage',
+                'updated' => $service->updated_at?->toAtomString(),
             ],
         ]);
     }
@@ -101,29 +105,120 @@ class SiteController extends Controller
 
     public function sitemap()
     {
-        $base = rtrim(setting('site_url') ?: url('/'), '/');
-        $urls = [['/', '1.0'], ['/about', '0.8'], ['/services', '0.9'], ['/documents', '0.7'], ['/contact', '0.8']];
-        foreach (Service::active()->ordered()->get() as $s) {
-            $urls[] = ['/services/' . $s->slug, '0.8'];
+        $base = site_base();
+        $services = Service::active()->ordered()->get();
+
+        $pages = [
+            ['/', '1.0', 'site/home.blade.php'],
+            ['/about', '0.8', 'site/about.blade.php'],
+            ['/services', '0.9', 'site/services.blade.php'],
+            ['/documents', '0.7', 'site/documents.blade.php'],
+            ['/contact', '0.8', 'site/contact.blade.php'],
+        ];
+
+        $urls = [];
+        foreach ($pages as [$path, $priority, $view]) {
+            $urls[] = [
+                'loc' => $base . $path,
+                'lastmod' => $this->lastModified($view),
+                'priority' => $priority,
+                'image' => null,
+                'title' => null,
+            ];
         }
 
-        $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n" . '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
-        foreach ($urls as [$path, $priority]) {
-            $xml .= '  <url><loc>' . e($base . ($path === '/' ? '/' : $path)) . '</loc><lastmod>' . now()->toDateString() . '</lastmod><priority>' . $priority . '</priority></url>' . "\n";
+        foreach ($services as $service) {
+            $urls[] = [
+                'loc' => $base . '/services/' . $service->slug,
+                'lastmod' => optional($service->updated_at)->toDateString() ?: $this->lastModified('site/service.blade.php'),
+                'priority' => '0.8',
+                'image' => absolute_media($service->hero_image ?: $service->card_image),
+                'title' => $service->title,
+            ];
+        }
+
+        $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n"
+            . '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">' . "\n";
+        foreach ($urls as $url) {
+            $xml .= '  <url><loc>' . e($url['loc']) . '</loc>'
+                . '<lastmod>' . e($url['lastmod']) . '</lastmod>'
+                . '<priority>' . e($url['priority']) . '</priority>';
+            if ($url['image']) {
+                $xml .= '<image:image><image:loc>' . e($url['image']) . '</image:loc>'
+                    . ($url['title'] ? '<image:title>' . e($url['title']) . '</image:title>' : '')
+                    . '</image:image>';
+            }
+            $xml .= '</url>' . "\n";
         }
         $xml .= '</urlset>';
 
         return response($xml, 200, ['Content-Type' => 'application/xml; charset=UTF-8']);
     }
 
-    protected function seo(string $page, ?string $crumb = null, string $path = '/'): array
+    /** ملف llms.txt لتعريف وكلاء الذكاء الاصطناعي بمحتوى الموقع */
+    public function llms()
     {
-        return [
+        $base = site_base();
+        $brand = setting('brand_name');
+        $lines = [
+            '# ' . (setting('site_name') ?: $brand),
+            '',
+            '> ' . (setting('seo_home_description') ?: setting('footer_text')),
+            '',
+            '## نبذة',
+            '',
+            '- الشركة: ' . $brand . ' — ' . (setting('brand_suffix') ?: 'للمقاولات'),
+            '- نطاق الخدمة: ' . implode('، ', \App\Models\Setting::list('seo_areas')),
+            '- المدينة: ' . setting('seo_city') . ' — ' . setting('seo_region'),
+            '- الهاتف: ' . setting('phone_main'),
+            '- البريد: ' . setting('email'),
+            '',
+            '## الخدمات',
+            '',
+        ];
+
+        foreach (Service::active()->ordered()->get() as $service) {
+            $lines[] = '- [' . $service->title . '](' . $base . '/services/' . $service->slug . '): ' . trim((string) ($service->excerpt ?: $service->subtitle));
+        }
+
+        $lines = array_merge($lines, [
+            '',
+            '## الصفحات',
+            '',
+            '- [عن ' . $brand . '](' . $base . '/about)',
+            '- [نطاق الأعمال](' . $base . '/services)',
+            '- [الوثائق الرسمية](' . $base . '/documents)',
+            '- [تواصل معنا](' . $base . '/contact)',
+            '',
+        ]);
+
+        return response(implode("\n", $lines), 200, ['Content-Type' => 'text/plain; charset=UTF-8']);
+    }
+
+    protected function lastModified(string $view): string
+    {
+        $file = resource_path('views/' . $view);
+
+        return is_file($file) ? date('Y-m-d', filemtime($file)) : now()->toDateString();
+    }
+
+    protected function seo(string $page, ?string $crumb = null, string $path = '/', array $extra = []): array
+    {
+        $types = [
+            'home' => 'WebPage',
+            'about' => 'AboutPage',
+            'services' => 'CollectionPage',
+            'documents' => 'CollectionPage',
+            'contact' => 'ContactPage',
+        ];
+
+        return array_merge([
             'title' => setting("seo_{$page}_title"),
             'description' => setting("seo_{$page}_description"),
             'image' => setting('og_image'),
             'path' => $path,
             'crumbs' => $crumb ? [[$crumb, $path]] : [],
-        ];
+            'type' => $types[$page] ?? 'WebPage',
+        ], $extra);
     }
 }

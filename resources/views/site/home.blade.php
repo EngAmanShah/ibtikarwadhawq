@@ -1,7 +1,21 @@
 @extends('site.layout')
 
+@php
+    $hero1 = setting('home_hero_image1');
+    $hero1Dims = media_dimensions($hero1);
+    $hero1Srcset = srcset_list($hero1);
+    $hero2 = setting('home_hero_image2');
+    $hero2Dims = media_dimensions($hero2);
+    $hero3 = setting('home_hero_image3');
+    $hero3Dims = media_dimensions($hero3);
+@endphp
+
 @push('head')
-<link href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css" rel="stylesheet" />
+<link href="{{ asset('assets/vendor/lib/slick.min.css') }}?v={{ @filemtime(public_path('assets/vendor/lib/slick.min.css')) }}" rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+<noscript><link href="{{ asset('assets/vendor/lib/slick.min.css') }}" rel="stylesheet" /></noscript>
+@if($hero1Srcset)
+<link as="image" fetchpriority="high" href="{{ media($hero1) }}" imagesizes="(max-width: 768px) 92vw, 560px" imagesrcset="{{ $hero1Srcset }}" rel="preload" />
+@endif
 @endpush
 
 @section('content')
@@ -17,9 +31,9 @@
       </div>
     </div>
     <div class="hero-board" data-reveal="">
-      <div class="material-card primary"><img alt="{{ setting('home_hero_title') }}" src="{{ media(setting('home_hero_image1')) }}" /></div>
-      <div class="material-card secondary"><img alt="{{ setting('brand_name') }}" src="{{ media(setting('home_hero_image2')) }}" /></div>
-      <div class="material-card third"><img alt="واجهة {{ setting('brand_name') }}" src="{{ media(setting('home_hero_image3')) }}" /></div>
+      <div class="material-card primary"><img alt="{{ setting('home_hero_title') }} — {{ setting('brand_name') }}" decoding="async" fetchpriority="high" src="{{ media($hero1) }}"@if($hero1Dims) width="{{ $hero1Dims['width'] }}" height="{{ $hero1Dims['height'] }}"@endif{!! img_srcset($hero1) !!} sizes="(max-width: 768px) 92vw, 560px" /></div>
+      <div class="material-card secondary"><img alt="{{ setting('brand_name') }}" decoding="async" src="{{ media($hero2) }}"@if($hero2Dims) width="{{ $hero2Dims['width'] }}" height="{{ $hero2Dims['height'] }}"@endif{!! img_srcset($hero2) !!} sizes="(max-width: 768px) 40vw, 250px" /></div>
+      <div class="material-card third"><img alt="واجهة {{ setting('brand_name') }}" decoding="async" src="{{ media($hero3) }}"@if($hero3Dims) width="{{ $hero3Dims['width'] }}" height="{{ $hero3Dims['height'] }}"@endif{!! img_srcset($hero3) !!} sizes="(max-width: 768px) 34vw, 210px" /></div>
     </div>
   </div>
 </section>
@@ -35,7 +49,7 @@
       <div class="section-actions"><a class="btn btn-primary" href="{{ url('/about') }}">{{ setting('home_about_btn') }} <i class="fa-solid fa-arrow-left"></i></a></div>
     </div>
     <div class="about-profile-image about-img equal-frame-media" data-reveal="">
-      <img alt="{{ setting('site_name') }}" loading="lazy" src="{{ media(setting('home_about_image')) }}" />
+      <img alt="{{ setting('site_name') }}" loading="lazy" decoding="async" src="{{ media(setting('home_about_image')) }}"@if($d = media_dimensions(setting('home_about_image'))) width="{{ $d['width'] }}" height="{{ $d['height'] }}"@endif{!! img_srcset(setting('home_about_image')) !!} sizes="(max-width: 900px) 92vw, 747px" />
     </div>
   </div>
 </section>
@@ -73,7 +87,7 @@
   <div aria-label="{{ setting('home_finishing_label') }}" class="finishing-slider" dir="ltr">
     <div class="finishing-track">
       @foreach($slides as $slide)
-        <div class="finish-card"><img alt="{{ $slide->title }}" src="{{ media($slide->image) }}" /><h3>{{ $slide->title }}</h3></div>
+        <div class="finish-card"><img alt="{{ $slide->title }}" loading="lazy" decoding="async" src="{{ media($slide->image) }}"@if($d = media_dimensions($slide->image)) width="{{ $d['width'] }}" height="{{ $d['height'] }}"@endif{!! img_srcset($slide->image) !!} sizes="(max-width: 768px) 45vw, 250px" /><h3>{{ $slide->title }}</h3></div>
       @endforeach
     </div>
   </div>
@@ -93,7 +107,7 @@
       @foreach($clients as $c)
         <div class="client-logo-wrap">
           @if($c->url)<a href="{{ $c->url }}" target="_blank" rel="noopener">@endif
-          <img alt="{{ $c->name }}" loading="lazy" src="{{ media($c->logo) }}" />
+          <img alt="{{ $c->name }}" loading="lazy" decoding="async" src="{{ media($c->logo) }}"@if($d = media_dimensions($c->logo)) width="{{ $d['width'] }}" height="{{ $d['height'] }}"@endif{!! img_srcset($c->logo) !!} sizes="(max-width: 768px) 30vw, 190px" />
           @if($c->url)</a>@endif
         </div>
       @endforeach
@@ -105,7 +119,7 @@
 @if(\App\Models\Setting::enabled('home_show_details'))
 <section class="section details-finishing">
   <div class="container detail-band" data-reveal="">
-    <img alt="{{ setting('home_details_label') }}" src="{{ media(setting('home_details_image')) }}" />
+    <img alt="{{ setting('home_details_label') }}" loading="lazy" decoding="async" src="{{ media(setting('home_details_image')) }}"@if($d = media_dimensions(setting('home_details_image'))) width="{{ $d['width'] }}" height="{{ $d['height'] }}"@endif{!! img_srcset(setting('home_details_image')) !!} sizes="(max-width: 900px) 92vw, 817px" />
     <div class="detail-copy">
       <div class="section-label"><i class="fa-solid fa-eye" style="margin-left:6px"></i> {{ setting('home_details_label') }}</div>
       <h2 class="section-title">{{ setting('home_details_title') }}</h2>
@@ -137,6 +151,6 @@
 @endsection
 
 @push('scripts')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
+<script defer src="{{ asset('assets/vendor/lib/jquery.min.js') }}?v={{ @filemtime(public_path('assets/vendor/lib/jquery.min.js')) }}"></script>
+<script defer src="{{ asset('assets/vendor/lib/slick.min.js') }}?v={{ @filemtime(public_path('assets/vendor/lib/slick.min.js')) }}"></script>
 @endpush

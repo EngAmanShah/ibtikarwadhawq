@@ -20,7 +20,7 @@
     <div class="docs-grid">
       @foreach($documents as $d)
       <article class="doc-card" data-reveal="">
-        @if($d->preview_image)<div class="doc-preview"><img alt="معاينة {{ $d->title }}" loading="lazy" src="{{ media($d->preview_image) }}" /></div>@endif
+        @if($d->preview_image)<div class="doc-preview"><img alt="معاينة {{ $d->title }}" loading="lazy" decoding="async" src="{{ media($d->preview_image) }}"@if($dims = media_dimensions($d->preview_image)) width="{{ $dims['width'] }}" height="{{ $dims['height'] }}"@endif{!! img_srcset($d->preview_image) !!} sizes="(max-width: 768px) 45vw, 240px" /></div>@endif
         <i class="fa-solid fa-file-pdf"></i>
         <h2>{{ $d->title }}</h2>
         @if($d->file)<a href="{{ media($d->file) }}" target="_blank"><i class="fa-solid fa-external-link-alt" style="margin-left:4px;"></i> {{ setting('documents_btn') }}</a>@endif
